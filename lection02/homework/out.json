@@ -1,0 +1,40 @@
+[
+	{
+		"company": "hoofs",
+		"valid_operations_count": 16,
+		"balance": 1475,
+		"invalid_operations": [
+			828,
+			"899b5b54-c690-4cae-a702-c4ff69a66bbb",
+			"1aa8f1ad-b8e1-4245-9a26-9c7d0f555a9b",
+			0,
+			0,
+			827,
+			"0116209c-f03c-4d14-9725-ae020e905e1e",
+			0,
+			0,
+			845,
+			0
+		]
+	},
+	{
+		"company": "horns",
+		"valid_operations_count": 14,
+		"balance": -260,
+		"invalid_operations": [
+			829,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0
+		]
+	},
+	{
+		"company": "tails",
+		"valid_operations_count": 1,
+		"balance": -438
+	}
+]

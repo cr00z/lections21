@@ -39,7 +39,7 @@ func main() {
 
 	// filesOpen()
 	// filesCreate()
-	// fileJSON()
+	 fileJSON()
 	// fileYAML()
 	// customMarshal()
 }
