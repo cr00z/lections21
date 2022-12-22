@@ -9,7 +9,7 @@ import (
 const n = 45
 
 func main() {
-	runtime.GOMAXPROCS(2)
+	runtime.GOMAXPROCS(1)
 	go spinner(100 * time.Millisecond)
 	fibN := fib(n)
 	fmt.Printf("\rFibonacci(%d) = %d\n", n, fibN)

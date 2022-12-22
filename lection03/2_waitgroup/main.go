@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"runtime"
 	"sync"
+	"time"
 )
 
 func main() {
@@ -17,7 +18,7 @@ func main() {
 		for char := 'a'; char < 'a'+26; char++ {
 			// runtime.Gosched() // 1
 			fmt.Printf("%c ", char)
-			// time.Sleep(150 * time.Nanosecond) // 2
+			time.Sleep(100 * time.Nanosecond) // 2
 		}
 	}()
 
@@ -26,7 +27,7 @@ func main() {
 		for char := 'A'; char < 'A'+26; char++ {
 			// runtime.Gosched() // 1
 			fmt.Printf("%c ", char)
-			// time.Sleep(150 * time.Nanosecond) // 2
+			time.Sleep(150 * time.Nanosecond) // 2
 		}
 	}()
 

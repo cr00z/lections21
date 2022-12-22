@@ -2,31 +2,32 @@ package main
 
 import (
 	"fmt"
+	"sync"
 )
 
 func main() {
 	stub := make(chan struct{})
 
-	// mu := &sync.RWMutex{}
+	mu := &sync.RWMutex{}
 	var s = "123"
 	go func() {
 		for {
-			// mu.RLock()
+			mu.RLock()
 			fmt.Println(s)
-			// mu.RUnlock()
+			mu.RUnlock()
 		}
 	}()
 
 	var tumbler bool
 	go func() {
 		for {
-			// mu.Lock()
+			mu.Lock()
 			if tumbler {
 				s = "123"
 			} else {
 				s = "ABCDE"
 			}
-			// mu.Unlock()
+			mu.Unlock()
 
 			tumbler = !tumbler
 		}

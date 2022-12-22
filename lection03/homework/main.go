@@ -2,75 +2,31 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"hw-async/domain"
 	"hw-async/generator"
 	"math"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
-	"sync"
 
 	log "github.com/sirupsen/logrus"
 )
 
 var tickers = []string{"AAPL", "SBER", "NVDA", "TSLA"}
 
-func proceedCandle1m(
-	wg *sync.WaitGroup,
-	logger *log.Logger,
+func convertPriceToCandle(wg *sync.WaitGroup, logger *log.Logger,
 	in <-chan domain.Price) <-chan domain.Candle {
-	
 	out := make(chan domain.Candle)
+
 	go func() {
 		defer wg.Done()
-		candles := make(map[string]domain.Candle)
 
 		for price := range in {
 			logger.Infof("in price: %+v", price)
-			period, _ := domain.PeriodTS(domain.CandlePeriod1m, price.TS)
-			candle, inMap := candles[price.Ticker]
 
-			if candle.TS != period {
-				if inMap {
-					logger.Infof("out 1m candle: %+v", candle)
-					out <- candle
-				}
-
-				candles[price.Ticker] = domain.Candle{
-					Ticker: price.Ticker,
-					Period: domain.CandlePeriod1m,
-					Open:   price.Value,
-					High:   price.Value,
-					Low:    price.Value,
-					Close:  price.Value,
-					TS:     period,
-				}
-			} else {
-				if price.Value > candle.High {
-					candle.High = price.Value
-				} else if price.Value < candle.Low {
-					candle.Low = price.Value
-				}
-				candle.Close = price.Value
-				candles[price.Ticker] = candle
-			}
-		}
-		close(out)
-		logger.Info("candle 1m gorutine done")
-	}()
-	return out
-}
-
-func convertPriceToCandle(wg *sync.WaitGroup,
-	logger *log.Logger,
-	in <-chan domain.Price) <-chan domain.Candle {
-
-	out := make(chan domain.Candle)
-	go func() {
-		defer wg.Done()
-
-		for price := range in {
 			out <- domain.Candle{
 				Ticker: price.Ticker,
 				Open:   price.Value,
@@ -87,29 +43,37 @@ func convertPriceToCandle(wg *sync.WaitGroup,
 	return out
 }
 
-func proceedCandle(
-	wg *sync.WaitGroup,
-	logger *log.Logger,
-	candlePeriod domain.CandlePeriod,
-	in <-chan domain.Candle) <-chan domain.Candle {
-
+func proceedCandle(wg *sync.WaitGroup, logger *log.Logger, file *os.File,
+	currentPeriod domain.CandlePeriod, in <-chan domain.Candle) <-chan domain.Candle {
 	out := make(chan domain.Candle)
 
 	go func() {
 		defer wg.Done()
+
 		candles := make(map[string]domain.Candle)
 
 		for currentCandle := range in {
-			currentPeriod, _ := domain.PeriodTS(candlePeriod, currentCandle.TS)
+			currentTS, _ := domain.PeriodTS(currentPeriod, currentCandle.TS)
 			storedCandle, inMap := candles[currentCandle.Ticker]
 
-			if storedCandle.TS != currentPeriod {
+			if storedCandle.TS != currentTS {
 				if inMap {
-					logger.Infof("out %v candle: %+v", candlePeriod, storedCandle)
+					logger.Infof("out %v candle: %+v", currentPeriod, storedCandle)
+
+					if file != nil {
+						fmt.Fprintf(file, "%s,%s,%f,%f,%f,%f\n",
+							storedCandle.Ticker,
+							storedCandle.TS,
+							storedCandle.Open,
+							storedCandle.High,
+							storedCandle.Low,
+							storedCandle.Close)
+					}
+
 					out <- storedCandle
 				}
-				currentCandle.Period = candlePeriod
-				currentCandle.TS = currentPeriod
+				currentCandle.Period = currentPeriod
+				currentCandle.TS = currentTS
 				candles[currentCandle.Ticker] = currentCandle
 			} else {
 				storedCandle.High = math.Max(storedCandle.High, currentCandle.High)
@@ -120,8 +84,9 @@ func proceedCandle(
 		}
 
 		close(out)
-		logger.Infof("candle %v gorutine done", candlePeriod)
+		logger.Infof("candle %v gorutine done", currentPeriod)
 	}()
+
 	return out
 }
 
@@ -144,12 +109,25 @@ func main() {
 
 	wg.Add(4)
 	candles := convertPriceToCandle(&wg, logger, prices)
-	candle1m := proceedCandle(&wg, logger, domain.CandlePeriod1m, candles)
-	candle2m := proceedCandle(&wg, logger, domain.CandlePeriod2m, candle1m)
-	candle10m := proceedCandle(&wg, logger, domain.CandlePeriod10m, candle2m)
+	for _, candlePeriod := range []domain.CandlePeriod{
+		domain.CandlePeriod1m,
+		domain.CandlePeriod2m,
+		domain.CandlePeriod10m,
+	} {
+		file, err := os.Create("candles_" + string(candlePeriod) + ".csv")
+		if err != nil {
+			logger.Error(err)
+			termChan <- syscall.SIGINT
+		} else {
+			defer file.Close()
+		}
+		candles = proceedCandle(&wg, logger, file, candlePeriod, candles)
+	}
+
 	for {
 		select {
-		case <-candle10m:
+		case <-candles:
+			// get 10m candle, do nothing
 		case <-termChan:
 			logger.Info("shutdown signal received")
 			cancel()
