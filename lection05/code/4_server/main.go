@@ -15,7 +15,7 @@ func main() {
 		ReadTimeout: time.Second,
 	}
 	http.HandleFunc("/", HelloHandler)
-	http.HandleFunc("/advanced", AdvancedHandler)
+	http.HandleFunc("/advanced/", AdvancedHandler)
 	log.Fatal(s.ListenAndServe())
 }
 

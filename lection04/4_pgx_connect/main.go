@@ -20,5 +20,7 @@ func main() {
 	if err = conn.Ping(context.Background()); err != nil {
 		log.Fatalf("can't ping db: %s", err)
 	}
+
+	log.Print("done")
 }
 

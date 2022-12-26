@@ -19,5 +19,6 @@ func main() {
 		log.Fatalf("can't ping db: %s", err)
 	}
 
+	log.Print("done")
 }
 

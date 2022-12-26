@@ -33,7 +33,7 @@ func main() {
 }
 
 func GetHello(w http.ResponseWriter, r *http.Request) {
-	id, ok := r.Context().Value(userID).(string)
+	id, ok := r.Context().Value(userID).(cookieVal)
 	if !ok {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
