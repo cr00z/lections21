@@ -33,5 +33,11 @@ func (h Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//token, err := h.service.
+	token, err := h.service.Authorization.GenerateJWT(input)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	renderJSON(w, map[string]string{"token": token})
 }

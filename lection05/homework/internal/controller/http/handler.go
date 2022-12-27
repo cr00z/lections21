@@ -4,20 +4,16 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/cr00z/chat/internal/domain"
+	"github.com/cr00z/chat/internal/service"
+	
 	"github.com/go-chi/chi/v5"
 )
 
-type Service interface {
-	CreateUser(domain.User) (int64, error)
-	GetMessages() []domain.Message
-}
-
 type Handler struct {
-	service Service
+	service service.Service
 }
 
-func New(s Service) *Handler {
+func New(s service.Service) *Handler {
 	return &Handler{
 		service: s,
 	}
@@ -33,7 +29,7 @@ func (h Handler) InitRoutes() *chi.Mux {
 	restricted.Post("/messages", h.PostMessageHandler)
 	restricted.Get("/messages", h.GetMessagesHandler)
 	restricted.Post("/users/{id}/messages", h.PostPrivateMessageHandler)
-	restricted.Get("/users/{id}/messages", h.GetPrivateMessagesHandler)
+	restricted.Get("/users/me/messages", h.GetPrivateMessagesHandler)
 
 	root.Mount("/api", restricted)
 

@@ -1,19 +1,96 @@
 package handler
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+	"strconv"
+
+	"github.com/cr00z/chat/internal/domain"
+
+	"github.com/go-chi/chi/v5"
+)
 
 func (h Handler) PostMessageHandler(w http.ResponseWriter, r *http.Request) {
-	_, _ = w.Write([]byte("post message"))
+	userID, err := getUserID(r)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	var message domain.Message
+	if err := json.NewDecoder(r.Body).Decode(&message); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	message.FromUserID = userID
+
+	if err := h.service.CreateMessage(message); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	renderJSON(w, map[string]string{"status":"ok"})
 }
 
 func (h Handler) GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
-	renderJSON(w, h.service.GetMessages())
+	if _, err := getUserID(r); err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	renderJSON(w, h.service.GetMessages(0))
 }
 
 func (h Handler) PostPrivateMessageHandler(w http.ResponseWriter, r *http.Request) {
-	_, _ = w.Write([]byte("post private message"))
+	userID, err := getUserID(r)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	idStr := chi.URLParam(r, "id")
+	toUserID, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || toUserID == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var message domain.Message
+	if err := json.NewDecoder(r.Body).Decode(&message); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	message.FromUserID = userID
+	message.ToUserID   = toUserID
+
+	if err := h.service.CreateMessage(message); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	renderJSON(w, map[string]string{"status":"ok"})
 }
 
 func (h Handler) GetPrivateMessagesHandler(w http.ResponseWriter, r *http.Request) {
-	_, _ = w.Write([]byte("get private messages"))
+	userID, err := getUserID(r)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	renderJSON(w, h.service.GetMessages(userID))
+}
+
+// service
+
+func getUserID(r *http.Request) (int64, error) {
+	id := r.Context().Value("ID")
+	if id == nil {
+		return 0, domain.ErrorUserIdNotFound
+	}
+
+	userID, ok := id.(int64)
+	if !ok {
+		return 0, domain.ErrorUserIdInvalidType
+	}
+
+	return userID, nil
 }

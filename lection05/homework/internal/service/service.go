@@ -1,39 +1,29 @@
 package service
 
 import (
-	"crypto/sha1"
-	"fmt"
-
 	"github.com/cr00z/chat/internal/domain"
 	"github.com/cr00z/chat/internal/infrastructure/repository/memory"
 )
 
-// TODO:
-const salt = "replace_me"
+type Authorization interface {
+	CreateUser(domain.User) (int64, error)
+	GenerateJWT(domain.User) (string, error)
+	ParseJWT(string) (int64, error)
+}
+
+type Messages interface {
+	GetMessages(int64) []domain.Message
+	CreateMessage(domain.Message) error
+}
 
 type Service struct {
-	repo repository.Repository
+	Authorization
+	Messages
 }
 
-func New(r repository.Repository) *Service {
-	return &Service{
-		repo: r,
+func New(repo repository.Repository) Service {
+	return Service{
+		Authorization: NewAuthService(repo.Authorization),
+		Messages:      NewMessagesService(repo.Messages),
 	}
-}
-
-func (s Service) CreateUser(user domain.User) (int64, error) {
-	user.Password = generatePasswordHash(user.Password)
-	return s.repo.Authorization.CreateUser(user)
-}
-
-func (s Service) GetMessages() []domain.Message {
-	return s.repo.Messages.GetMessages()
-}
-
-// utils
-
-func generatePasswordHash(password string) string {
-	hash := sha1.New()
-	hash.Write([]byte(password))
-	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
 }

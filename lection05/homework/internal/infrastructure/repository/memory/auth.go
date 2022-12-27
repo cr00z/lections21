@@ -11,7 +11,7 @@ func NewAuthMemory() *AuthMemory {
 }
 
 func (r *AuthMemory) CreateUser(user domain.User) (int64, error) {
-	// INSERT ... RETURNING id analogue
+	// INSERT ... RETURNING id
 	for _, u := range r.Users {
 		if u.Username == user.Username {
 			return 0, domain.ErrorIncorrectUsername
@@ -21,4 +21,14 @@ func (r *AuthMemory) CreateUser(user domain.User) (int64, error) {
 	user.ID = id
 	r.Users = append(r.Users, user)
 	return id, nil
+}
+
+func (r *AuthMemory) GetUser(user domain.User) (domain.User, error) {
+	// SELECT ... WHERE username = '...' AND password = '...'
+	for _, u := range r.Users {
+		if u.Username == user.Username && u.Password == user.Password {
+			return u, nil
+		}
+	}
+	return domain.User{}, domain.ErrorUnknownUser
 }
