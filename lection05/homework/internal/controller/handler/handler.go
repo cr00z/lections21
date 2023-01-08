@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/cr00z/chat/internal/service"
-	
+	"github.com/cr00z/goSimpleChat/internal/service"
 	"github.com/go-chi/chi/v5"
 )
+
+type contextKey string
 
 type Handler struct {
 	service service.Service

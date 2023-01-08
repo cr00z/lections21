@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/cr00z/chat/internal/domain"
-	"github.com/cr00z/chat/internal/infrastructure/repository/memory"
+	"github.com/cr00z/goSimpleChat/internal/domain"
+	repository "github.com/cr00z/goSimpleChat/internal/infrastructure/repository/memory"
 )
 
 type Authorization interface {

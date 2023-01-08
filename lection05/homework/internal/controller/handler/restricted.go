@@ -5,8 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/cr00z/chat/internal/domain"
-
+	"github.com/cr00z/goSimpleChat/internal/domain"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -29,7 +28,7 @@ func (h Handler) PostMessageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderJSON(w, map[string]string{"status":"ok"})
+	renderJSON(w, map[string]string{"status": "ok"})
 }
 
 func (h Handler) GetMessagesHandler(w http.ResponseWriter, r *http.Request) {
@@ -60,14 +59,14 @@ func (h Handler) PostPrivateMessageHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	message.FromUserID = userID
-	message.ToUserID   = toUserID
+	message.ToUserID = toUserID
 
 	if err := h.service.CreateMessage(message); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	renderJSON(w, map[string]string{"status":"ok"})
+	renderJSON(w, map[string]string{"status": "ok"})
 }
 
 func (h Handler) GetPrivateMessagesHandler(w http.ResponseWriter, r *http.Request) {
@@ -82,14 +81,14 @@ func (h Handler) GetPrivateMessagesHandler(w http.ResponseWriter, r *http.Reques
 // service
 
 func getUserID(r *http.Request) (int64, error) {
-	id := r.Context().Value("ID")
+	id := r.Context().Value(contextKey("ID"))
 	if id == nil {
-		return 0, domain.ErrorUserIdNotFound
+		return 0, domain.ErrorUserIDNotFound
 	}
 
 	userID, ok := id.(int64)
 	if !ok {
-		return 0, domain.ErrorUserIdInvalidType
+		return 0, domain.ErrorUserIDInvalidType
 	}
 
 	return userID, nil

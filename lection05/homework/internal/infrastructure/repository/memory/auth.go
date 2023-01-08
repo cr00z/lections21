@@ -1,6 +1,6 @@
 package repository
 
-import "github.com/cr00z/chat/internal/domain"
+import "github.com/cr00z/goSimpleChat/internal/domain"
 
 type AuthMemory struct {
 	Users []domain.User

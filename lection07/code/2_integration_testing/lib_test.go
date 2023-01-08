@@ -55,7 +55,7 @@ func TestHttpReq_mock(t *testing.T) {
 		fmt.Printf("HTTP handler: %q\n", req.RequestURI)
 		_, _ = resp.Write([]byte(req.RequestURI))
 	}))
-	defer func() { server.Close() }()
+	defer server.Close()
 
 	const expect = "/hello_world"
 

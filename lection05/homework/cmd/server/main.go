@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/cr00z/chat/internal/app"
+	"github.com/cr00z/goSimpleChat/internal/app"
 )
 
 func main() {

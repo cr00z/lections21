@@ -1,6 +1,6 @@
 package repository
 
-import "github.com/cr00z/chat/internal/domain"
+import "github.com/cr00z/goSimpleChat/internal/domain"
 
 type MessagesMemory struct {
 	Messages []domain.Message
@@ -24,7 +24,7 @@ func (r MessagesMemory) GetMessages(userID int64) []domain.Message {
 	for _, msg := range r.Messages {
 		if msg.ToUserID == userID {
 			result = append(result, msg)
-		} 
+		}
 	}
 	return result
 }

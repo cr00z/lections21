@@ -1,4 +1,4 @@
-module github.com/cr00z/chat
+module github.com/cr00z/goSimpleChat
 
 go 1.17
 

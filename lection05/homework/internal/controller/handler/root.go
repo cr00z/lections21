@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/cr00z/chat/internal/domain"
+	"github.com/cr00z/goSimpleChat/internal/domain"
 )
 
 func (h Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {

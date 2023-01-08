@@ -32,7 +32,7 @@ func (h Handler) Auth(handler http.Handler) http.Handler {
 			return
 		}
 
-		idCtx := context.WithValue(r.Context(), "ID", userID)
+		idCtx := context.WithValue(r.Context(), contextKey("ID"), userID)
 		handler.ServeHTTP(w, r.WithContext(idCtx))
 	}
 	return http.HandlerFunc(fn)

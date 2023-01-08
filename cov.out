@@ -1,0 +1,16 @@
+mode: set
+github.com/tfs-go/lections21/lection07/code/3_benchmark_testing/lib.go:8.30,10.2 1 0
+github.com/tfs-go/lections21/lection07/code/3_benchmark_testing/lib.go:12.34,14.2 1 0
+github.com/tfs-go/lections21/lection07/code/3_benchmark_testing/lib.go:16.48,18.2 1 0
+github.com/tfs-go/lections21/lection07/code/2_integration_testing/lib.go:8.43,10.16 2 1
+github.com/tfs-go/lections21/lection07/code/2_integration_testing/lib.go:13.2,13.15 1 1
+github.com/tfs-go/lections21/lection07/code/2_integration_testing/lib.go:15.2,16.16 2 1
+github.com/tfs-go/lections21/lection07/code/2_integration_testing/lib.go:19.2,19.26 1 1
+github.com/tfs-go/lections21/lection07/code/2_integration_testing/lib.go:10.16,12.3 1 0
+github.com/tfs-go/lections21/lection07/code/2_integration_testing/lib.go:13.15,13.40 1 1
+github.com/tfs-go/lections21/lection07/code/2_integration_testing/lib.go:16.16,18.3 1 0
+github.com/tfs-go/lections21/lection07/code/1_unit_testing/lib.go:8.30,10.2 1 1
+github.com/tfs-go/lections21/lection07/code/1_unit_testing/lib.go:12.35,13.39 1 0
+github.com/tfs-go/lections21/lection07/code/1_unit_testing/lib.go:16.2,16.24 1 0
+github.com/tfs-go/lections21/lection07/code/1_unit_testing/lib.go:13.39,15.3 1 0
+github.com/tfs-go/lections21/lection07/code/1_unit_testing/lib.go:19.36,22.2 2 1

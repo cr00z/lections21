@@ -10,6 +10,6 @@ var (
 	ErrorTokenIsEmpty         = errors.New("token is empty")
 	ErrorInvalidSigningMethod = errors.New("invalid signing method")
 	ErrorInvalidTokenClaims   = errors.New("invalid token claims")
-	ErrorUserIdNotFound       = errors.New("user id not found")
-	ErrorUserIdInvalidType    = errors.New("user id invalid type")
+	ErrorUserIDNotFound       = errors.New("user id not found")
+	ErrorUserIDInvalidType    = errors.New("user id invalid type")
 )
